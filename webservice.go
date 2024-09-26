@@ -21,43 +21,28 @@ func (b *BPLog) ServeHttp() {
 }
 
 type BPChartData struct {
-	Labels   []string  `json:"labels"`
-	Datasets []DataSet `json:"datasets"`
-}
-type DataSet struct {
-	Name      string `json:"name"`
-	ChartType string `json:"chartType"`
-	Values    []int  `json:"values"`
+	Dates     []time.Time `json:"dates"`
+	Systolic  []int       `json:"systolic"`
+	Diastolic []int       `json:"diastolic"`
+	Pulse     []int       `json:"pulse"`
 }
 
 func (b *BPLog) ServeBPData(ctx *gin.Context) {
 	readings := []BloodPressure{}
 	r := b.db.Find(&readings)
-	chart := BPChartData{
-		Labels: make([]string, r.RowsAffected),
-	}
-	systolic := DataSet{
-		Name:      "Systolic",
-		ChartType: "line",
-		Values:    make([]int, r.RowsAffected),
+
+	chart := &BPChartData{
+		Dates:     make([]time.Time, r.RowsAffected),
+		Systolic:  make([]int, r.RowsAffected),
+		Diastolic: make([]int, r.RowsAffected),
+		Pulse:     make([]int, r.RowsAffected),
 	}
 
-	diastolic := DataSet{
-		Name:      "Diastolic",
-		ChartType: "line",
-		Values:    make([]int, r.RowsAffected),
-	}
-	pulse := DataSet{
-		Name:      "Pulse",
-		ChartType: "line",
-		Values:    make([]int, r.RowsAffected),
-	}
 	for i, reading := range readings {
-		chart.Labels[i] = reading.Date.String()
-		systolic.Values[i] = reading.Systolic
-		diastolic.Values[i] = reading.Diastolic
-		pulse.Values[i] = reading.Pulse
+		chart.Dates[i] = reading.Date
+		chart.Systolic[i] = reading.Systolic
+		chart.Diastolic[i] = reading.Diastolic
+		chart.Pulse[i] = reading.Pulse
 	}
-	chart.Datasets = []DataSet{systolic, diastolic, pulse}
 	ctx.JSON(http.StatusOK, chart)
 }
