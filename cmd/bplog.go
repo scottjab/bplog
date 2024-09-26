@@ -6,5 +6,5 @@ func main() {
 	b := bplog.NewBPLog()
 	b.DBMigrate()
 	//b.LoadCSVIntoDB("/Users/scottjab/Downloads/history.csv")
-	b.Plot()
+	b.ServeHttp()
 }
