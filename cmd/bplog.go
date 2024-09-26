@@ -19,7 +19,3 @@ func main() {
 	}
 	b.ServeHttp()
 }
-
-func loadData(string) {
-
-}

@@ -48,7 +48,7 @@
     let name = 'jim'
 </script>
 <style>
-    table, th, td {
+    table, th {
     border: 1px solid;
 }
 </style>
