@@ -29,13 +29,13 @@
         },
         series: [systolic,diastolic,pulse]
     };
-
-
+    let rawData = []
     onMount(async () => {
         fetch("/api/bp")
             .then(response => response.json())
             .then(d => {
                 console.log(d)
+                rawData = d.rawData
                 systolic.data = d.systolic
                 diastolic.data = d.diastolic
                 pulse.data = d.pulse
@@ -47,9 +47,35 @@
 
     let name = 'jim'
 </script>
-
+<style>
+    table, th, td {
+    border: 1px solid;
+}
+</style>
 
 <h1>Welcome to {name}'s blood pressure graph.</h1>
 
 <Chart {options} />
 
+
+<table>
+    <caption>{name}'s Blood Pressure Data</caption>
+    <thead>
+    <tr>
+        <th>Date</th>
+        <th>Systolic</th>
+        <th>Diastolic</th>
+        <th>Pulse</th>
+    </tr>
+    </thead>
+    <tbody>
+    {#each rawData as rd }
+        <tr>
+            <th>{rd.date}</th>
+            <th>{rd.systolic}</th>
+            <th>{rd.diastolic}</th>
+            <th>{rd.pulse}</th>
+        </tr>
+    {/each}
+    </tbody>
+</table>

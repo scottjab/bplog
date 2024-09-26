@@ -25,6 +25,13 @@ type BPChartData struct {
 	Systolic  []int       `json:"systolic"`
 	Diastolic []int       `json:"diastolic"`
 	Pulse     []int       `json:"pulse"`
+	RawData   []BPEntry   `json:"rawData"`
+}
+type BPEntry struct {
+	Date      time.Time `json:"date"`
+	Systolic  int       `json:"systolic"`
+	Diastolic int       `json:"diastolic"`
+	Pulse     int       `json:"pulse"`
 }
 
 func (b *BPLog) ServeBPData(ctx *gin.Context) {
@@ -36,6 +43,7 @@ func (b *BPLog) ServeBPData(ctx *gin.Context) {
 		Systolic:  make([]int, r.RowsAffected),
 		Diastolic: make([]int, r.RowsAffected),
 		Pulse:     make([]int, r.RowsAffected),
+		RawData:   make([]BPEntry, r.RowsAffected),
 	}
 
 	for i, reading := range readings {
@@ -43,6 +51,12 @@ func (b *BPLog) ServeBPData(ctx *gin.Context) {
 		chart.Systolic[i] = reading.Systolic
 		chart.Diastolic[i] = reading.Diastolic
 		chart.Pulse[i] = reading.Pulse
+		chart.RawData[i] = BPEntry{
+			Date:      reading.Date,
+			Systolic:  reading.Systolic,
+			Diastolic: reading.Diastolic,
+			Pulse:     reading.Pulse,
+		}
 	}
 	ctx.JSON(http.StatusOK, chart)
 }
